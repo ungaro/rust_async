@@ -28,9 +28,15 @@ async fn main() -> Result<(), Report> {
 
     pub const URL_1: &str = "https://fasterthanli.me/articles/whats-in-the-box";
     pub const URL_2: &str = "https://fasterthanli.me/series/advent-of-code-2020/part-13";
+    /*
+        let res = tj::try_join(fetch_thing("first"), fetch_thing("second")).await?;
+        info!(?res, "All done!");
+    */
 
+    info!("Joining...");
     let res = tj::try_join(fetch_thing("first"), fetch_thing("second")).await?;
     info!(?res, "All done!");
+
     /*
     let mut group = vec![
         fetch_thing(URL_1),
