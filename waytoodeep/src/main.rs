@@ -1,16 +1,16 @@
 use color_eyre::Report;
+use futures::{stream::FuturesUnordered, StreamExt};
+use std::future::Future;
 use tracing::info;
 use tracing_subscriber::filter::EnvFilter;
 use tracing_subscriber::{fmt, prelude::*};
-use std::future::Future;
-use futures::{stream::FuturesUnordered, StreamExt};
 
 use std::time::Duration;
 use tokio::time::sleep;
 
 use std::sync::Arc;
-use webpki::DNSNameRef;
 use tokio_rustls::{rustls::ClientConfig, TlsConnector};
+use webpki::DNSNameRef;
 
 use std::net::SocketAddr;
 use tokio::{
@@ -26,15 +26,12 @@ async fn main() -> Result<(), Report> {
 
     info!("Hello from a comfy nest we've made for ourselves");
 
-
     pub const URL_1: &str = "https://fasterthanli.me/articles/whats-in-the-box";
     pub const URL_2: &str = "https://fasterthanli.me/series/advent-of-code-2020/part-13";
 
-
-
-
-
-    
+    let res = tj::try_join(fetch_thing("first"), fetch_thing("second")).await?;
+    info!(?res, "All done!");
+    /*
     let mut group = vec![
         fetch_thing(URL_1),
         fetch_thing(URL_2),
@@ -46,6 +43,8 @@ async fn main() -> Result<(), Report> {
         // propagate errors
         item?;
     }
+
+    */
     /*
     let client = Client::new();
 
@@ -70,7 +69,7 @@ fn type_name_of<T>(_: &T) -> &'static str {
     std::any::type_name::<T>()
 }
 
-async fn fetch_thing(name: &str) -> Result<(), Report> {
+async fn fetch_thing(name: &str) -> Result<&str, Report> {
     // look out it's port 443 now
     let addr: SocketAddr = ([1, 1, 1, 1], 443).into();
     let socket = TcpStream::connect(addr).await?;
@@ -104,10 +103,8 @@ async fn fetch_thing(name: &str) -> Result<(), Report> {
 
     // dropping the socket will close the connection
 
-    Ok(())
+    Ok(name)
 }
-
-
 
 /*
 #[allow(clippy::manual_async_fn)]
